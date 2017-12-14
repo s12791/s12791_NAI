@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<script type="application/javascript">
+ function draw() {
+      var canvas = document.getElementById("canvas");
+      
+        if (canvas.getContext) {
+            var context = canvas.getContext("2d");
+			//color of background olive
+            context.fillStyle = "rgb(107,142,35)"; 
+            context.fillRect (0, 0, 640, 640);
+        }
+        
+        var map = [];
+        for (var x = 0; x < 20; x++) {
+            map[x] = [];
+            for (var y = 0; y < 20; y++) 
+                map[x][y] = {'x':x, 'y':y, 'wall':0};//generate empty spaces
+        }
+		// 150x random generate black wall
+        for(var count=0; count<=150; count++){
+                      
+            var x = Math.floor(((Math.random() * 319) + 0)/16);
+            var y = Math.floor(((Math.random() * 319) + 0)/16);  
+                     
+				//walls color - dark green	 
+            context.fillStyle = "rgb(0,50,0)";
+            context.fillRect (x*32, y*32, 32, 32);
+            map[x][y] = {'x':x, 'y':y, 'wall':1};  //generate walls
+        }
+    }
+   </script>
+</head>
+<body>
+	<button onclick="draw()">Click to generate the map</button>
+
+	<canvas id="canvas" width="640" height="640">
+ </canvas>
+</body>
+</html>
