@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <script type="application/javascript">
- function draw() {
+ function createMap() {
       var canvas = document.getElementById("canvas");
       
         if (canvas.getContext) {
@@ -34,7 +34,7 @@
    </script>
 </head>
 <body>
-	<button onclick="draw()">Click to generate the map</button>
+	<button onclick="createMap()">Click to generate the map</button>
 
 	<canvas id="canvas" width="640" height="640">
  </canvas>
