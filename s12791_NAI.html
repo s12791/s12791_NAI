@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <script type="application/javascript">
-  function draw() {
+
+ function draw() {
       var canvas = document.getElementById("canvas");
       
         if (canvas.getContext) {
@@ -48,8 +49,8 @@
 		
 		//TARGET
                var targetPoint = {};
-        targetPoint.x = 2;
-        targetPoint.y = 2;
+        targetPoint.x = 18;
+        targetPoint.y = 18;
             // targetPoint color - light blue
         context.fillStyle = "rgb(0,255,255)";
         context.fillRect (targetPoint.x*32, targetPoint.y*32, 32, 32);
@@ -67,7 +68,7 @@
         return length;      
     }
       
-    function neighbors(map, node) {
+    function neighbours(map, node) {
         var setOfCoordinates = [];
         var x = node.x;
         var y = node.y;
@@ -94,11 +95,104 @@
         }
         return setOfCoordinates;
     }
+      
+    function findThePath(map, startPoint, targetPoint) {
+           
+        var open = [];
+        var closed = [];
+        open.push(startPoint);
+        open[0].g = 0;
+        open[0].f = 0;
+          
+        while(open.length>0){
+            var best = 0;
+            
+            console.log("amount in open ",open.length);
+              
+            for(var i=0; i<open.length; i++){
+                
+                console.log("point:",open[i].x,",",open[i].y,", cost f:", open[i].f);
+                
+              	if(open[i].f <= open[best].f) { 
+                    best = i; 
+                }
+            }
+            console.log("=========================");
+            
+			var currentNode = open[best];
+              
+            var context = canvas.getContext("2d");
+            context.fillStyle = "rgba(200,200,200, 0.5)";
+            context.fillRect (currentNode.x*32, currentNode.y*32, 32, 32);
+            
+            var temp = open[open.length-1];
+            open[open.length-1] = open[best];
+            open[best] = temp;
+            open.pop();
+      
+            if((currentNode.x == targetPoint.x) && (currentNode.y == targetPoint.y)) {
+                console.log("Found the optimal path");
+				var path = [];
+                
+				while(currentNode.parent) {
+					path.push(currentNode);
+					currentNode = currentNode.parent;
+                }
+                
+                var context = canvas.getContext("2d");               
+                context.fillStyle = "rgb(175,238,238)";
+                
+                for(var i=1; i<path.length; i++){
+                   context.fillRect (path[i].x*32, path[i].y*32, 32, 32);         
+                }
+                return 0;
+			}
+          
+            console.log("choosed:",currentNode.x,",",currentNode.y);
+            closed.push(currentNode); 
+            console.log("amount in closed ",closed.length);
+            var getneighbours = neighbours(map, currentNode);
+          	for(var i=0; i<getneighbours.length; i++) {   
+				var neighbour = getneighbours[i];
+				
+                if(searchnode(closed, neighbour)) {  
+				    continue;
+				}
+                var gscore = currentNode.g+1;  
+                
+                if(!searchnode(open, neighbour)){
+                    
+                    map[neighbour.x][neighbour.y].h = heuristic(neighbour, targetPoint);                    
+                    map[neighbour.x][neighbour.y].g = gscore;
+                    map[neighbour.x][neighbour.y].f = gscore + map[neighbour.x][neighbour.y].h;
+                    map[neighbour.x][neighbour.y].parent = currentNode;
+                    open.push(neighbour);
+                }
+                
+                else if(gscore < (map[neighbour.x][neighbour.y].g)) {
+                    
+                    map[neighbour.x][neighbour.y].g = gscore;
+                    map[neighbour.x][neighbour.y].f = gscore + map[neighbour.x][neighbour.y].h;
+                    map[neighbour.x][neighbour.y].parent = currentNode;
+                }
+            }                
+          }
+          alert("There is no possible path");
+          return [];
+        }
+      
+        function searchnode(map, node){
+            for(var i=0; i<=map.length; i++){
+                  if(map[i] == node){
+                          return true;
+                  }
+            }
+            return false;
+        }
    </script>
 </head>
 <body>
 	<button onclick="draw()">Click to generate the map</button>
-
 	<canvas id="canvas" width="640" height="640">
  </canvas>
 </body>
