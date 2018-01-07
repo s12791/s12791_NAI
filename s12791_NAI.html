@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <script type="application/javascript">
- function draw() {
+  function draw() {
       var canvas = document.getElementById("canvas");
       
         if (canvas.getContext) {
@@ -20,7 +20,7 @@
                 map[x][y] = {'x':x, 'y':y, 'wall':0};//generate empty spaces
         }
 		// random generate wall
-        for(var count=0; count<=150; count++){
+        for(var count=0; count<=99; count++){
                       
             var x = Math.floor(((Math.random() * 319) + 0)/16);
             var y = Math.floor(((Math.random() * 319) + 0)/16);  
@@ -47,19 +47,52 @@
         map[x][y].wall = 2; //startPoint
 		
 		//TARGET
-        var targetPoint = {};
-        while(map[x][y].wall!=0){
-            //if not wall random generate targetPoint
-            x = Math.floor(((Math.random() * 319) + 0)/16);
-            y = Math.floor(((Math.random() * 319) + 0)/16); 
-            targetPoint.x=x;
-            targetPoint.y=y;
-            targetPoint.wall=2; 
-        }
+               var targetPoint = {};
+        targetPoint.x = 2;
+        targetPoint.y = 2;
             // targetPoint color - light blue
         context.fillStyle = "rgb(0,255,255)";
         context.fillRect (targetPoint.x*32, targetPoint.y*32, 32, 32);
         map[targetPoint.x][targetPoint.y].wall = 3; //targetPoint
+		
+		findThePath(map, startPoint, targetPoint);
+    }
+
+    function heuristic(pos0, pos1) {
+        
+        var dlX = Math.abs(pos1.x - pos0.x);
+        var dlY = Math.abs(pos1.y - pos0.y);
+        var length = Math.floor(Math.sqrt((dlX * dlX) + (dlY * dlY)));
+       
+        return length;      
+    }
+      
+    function neighbors(map, node) {
+        var setOfCoordinates = [];
+        var x = node.x;
+        var y = node.y;
+    
+        if((x-1)>=0){
+            if(map[x-1][y].wall!=1){
+                setOfCoordinates.push(map[x - 1][y]);
+            }
+        }
+        if((x+1)<=19){
+            if (map[x+1][y].wall!=1) {
+                setOfCoordinates.push(map[x + 1][y]);
+            }
+        }
+        if((y-1)>=0){
+            if (map[x][y-1].wall!=1) { 
+                setOfCoordinates.push(map[x][y - 1]);
+            }
+        }
+        if((y+1)<=19){
+            if (map[x][y+1].wall!=1) {
+                setOfCoordinates.push(map[x][y + 1]);
+            }
+        }
+        return setOfCoordinates;
     }
    </script>
 </head>
